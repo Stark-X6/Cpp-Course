@@ -1,1 +1,12 @@
-* text eol=lf
+# 源代码与文本统一使用 LF
+*.cpp text eol=lf
+*.h   text eol=lf
+CMakeLists.txt text eol=lf
+*.txt text eol=lf
+
+# Windows 批处理脚本使用 CRLF
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Git 本身配置文件使用 LF
+.gitignore text eol=lf
