@@ -1,3 +1,4 @@
+chcp 65001 >nul
 rem 自动执行bin目录下的exe文件（如果有多个exe文件，会自动执行最后找到的exe文件）
 @echo off
 pushd .
