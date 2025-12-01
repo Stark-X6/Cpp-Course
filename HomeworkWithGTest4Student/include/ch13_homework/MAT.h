@@ -28,7 +28,103 @@ public:
 
 //注意：类模板的函数实现一定要写在MAT.h头文件里
 
+// 构造函数
+template<typename T>
+MAT<T>::MAT(int r, int c) : r(r), c(c) {
+    // 假设 r 和 c 都是 > 0 的整数
+    e = new T*[r]; // 分配 r 个行指针
+    for(int i = 0; i < r; ++i) {
+        e[i] = new T[c](); // 分配 c 个元素，并使用 () 进行值初始化（T = int/float/double 时初始化为 0）
+    }
+}
 
+// 深拷贝构造函数
+template<typename T>
+MAT<T>::MAT(const MAT& a) : r(a.r), c(a.c) {
+    e = new T*[r];
+    for(int i = 0; i < r; ++i) {
+        e[i] = new T[c];
+        for(int j = 0; j < c; ++j) {
+            e[i][j] = a.e[i][j]; // 拷贝元素
+        }
+    }
+}
+
+// 析构函数
+template<typename T>
+MAT<T>::~MAT() noexcept {
+    if (e != nullptr) {
+        for(int i = 0; i < r; ++i) {
+            delete[] e[i]; // 释放每一行的一维数组
+        }
+        delete[] e; // 释放行指针数组
+        e = nullptr;
+    }
+    r = 0;
+    c = 0;
+}
+
+// 重载 [] 运算符 (行索引访问)
+template<typename T>
+T * MAT<T>::operator[](int i) const {
+    // 不考虑参数越界情况，直接返回第 i 行的指针
+    return e[i];
+}
+
+// 矩阵转置 (~)
+template<typename T>
+MAT<T> MAT<T>::operator~() const {
+    // 转置后的矩阵行数是原矩阵的列数，列数是原矩阵的行数
+    MAT<T> result(c, r); 
+    
+    for(int i = 0; i < r; ++i) {
+        for(int j = 0; j < c; ++j) {
+            result.e[j][i] = e[i][j]; // [i][j] -> [j][i]
+        }
+    }
+    return result;
+}
+
+// 矩阵相加 (+)
+template<typename T>
+MAT<T> MAT<T>::operator+(const MAT<T>& other) const {
+    // 检查维度是否匹配
+    if (r != other.r || c != other.c) {
+        throw std::string("can not +");
+    }
+
+    MAT<T> result(r, c);
+
+    for(int i = 0; i < r; ++i) {
+        for(int j = 0; j < c; ++j) {
+            result.e[i][j] = e[i][j] + other.e[i][j];
+        }
+    }
+    return result;
+}
+
+// 矩阵相乘 (*)
+template<typename T>
+MAT<T> MAT<T>::operator*(const MAT<T>& other) const {
+    // 检查维度是否匹配: 当前矩阵的列数必须等于 other 矩阵的行数
+    if (c != other.r) {
+        throw std::string("can not *");
+    }
+
+    // 结果矩阵的维度是 (this->r) x (other->c)
+    MAT<T> result(r, other.c);
+
+    for(int i = 0; i < r; ++i) { // 结果矩阵的行
+        for(int j = 0; j < other.c; ++j) { // 结果矩阵的列
+            T sum = T(); // 使用 T() 进行值初始化 (例如 int/float 初始化为 0)
+            for(int k = 0; k < c; ++k) { // 乘积项的索引
+                sum += e[i][k] * other.e[k][j];
+            }
+            result.e[i][j] = sum;
+        }
+    }
+    return result;
+}
 
 
 //这里帮学生给出实现算了

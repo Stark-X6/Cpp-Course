@@ -1,5 +1,19 @@
 #pragma once
 #include "QUEUE.h"
+
+// 获取入队列元素个数
+#define IN_QUEUE_ELEMS (QUEUE::operator int()) 
+// 获取入队列容量
+#define IN_QUEUE_CAPACITY (QUEUE::capacity()) 
+// 获取出队列元素个数
+#define OUT_QUEUE_ELEMS (int(q)) 
+// 获取出队列容量
+#define OUT_QUEUE_CAPACITY (q.capacity()) 
+// 获取双队列元素个数
+#define DUALQUEUE_ELEMS (int(*this)) 
+// 获取双队列容量
+#define DUALQUEUE_CAPACITY (capacity())
+
 /**
  * 在二个先进先出QUEUE上实现双队列
  * 注意DUALQUEUE内部有二个QUEUE，一个是继承的QUEUE（为了方便描述，称为入队列），一个是数据成员q的QUEUE（为了方便描述，称为出队列）
@@ -11,6 +25,8 @@ class DUALQUEUE :public QUEUE
 {
 	QUEUE q;
 public:
+	using QUEUE::operator=;
+
 	DUALQUEUE(int m);                    		        	//初始化DUALQUEUE：入队列和出队列2大小都为m。DUALQUEUE最多存放2m个元素
 	DUALQUEUE(const DUALQUEUE& s);         			        //深拷贝构造
 	DUALQUEUE(DUALQUEUE&& s)noexcept;     			        //浅拷贝构造
